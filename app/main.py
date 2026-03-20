@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Annotated
+import os
 
 from fastapi import BackgroundTasks, FastAPI, Form, HTTPException
 from pydantic import ValidationError
@@ -16,6 +17,11 @@ app = FastAPI(
     version="1.0.0",
     description="API для приема ответов RSVP анкеты.",
 )
+
+
+def _get_cors_origins() -> list[str]:
+    raw = os.getenv("CORS_ORIGINS", "*")
+    return [item.strip() for item in raw.split(",") if item.strip()]
 
 TRUTHY_VALUES = {"1", "true", "yes", "on", "да"}
 FALSY_VALUES = {"0", "false", "no", "off", "нет"}
@@ -47,7 +53,7 @@ def _save_rsvp(payload: RSVPIn) -> RSVPStored:
 # Enable CORS so an existing frontend can call the API from another origin.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_get_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
