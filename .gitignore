@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.log
+.venv/
+.env
+data/responses.json
